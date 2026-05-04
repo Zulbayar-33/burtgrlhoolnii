@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+  <meta charset="UTF-8">
+  <title>А хоол идсэн бүртгэл</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: #f4f6f9;
+      font-family: Arial, sans-serif;
+    }
+
+    .box {
+      max-width: 650px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+
+    .title {
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    #msg {
+      font-weight: 700;
+      margin-top: 15px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="box">
+
+    <h3 class="title">А хоол идсэн бүртгэл</h3>
+
+    <label class="form-label">Ажилтан сонгох</label>
+    <select id="employee" class="form-select mb-3">
+      <option value="">Ажилтан сонгоно уу</option>
+
+      <option value="2" data-no="1" data-ovog="Тайвансайхан" data-ner="Алимаа" data-job="Хүний нөөцийн албаны дарга">1. Тайвансайхан Алимаа - Хүний нөөцийн албаны дарга</option>
+      <option value="3" data-no="2" data-ovog="Зоригтбаатар" data-ner="Амарзаяа" data-job="Төв салбар худалдааны зөвлөх">2. Зоригтбаатар Амарзаяа - Төв салбар худалдааны зөвлөх</option>
+      <option value="4" data-no="3" data-ovog="" data-ner="Алтантулга" data-job="">3. Алтантулга</option>
+      <option value="5" data-no="4" data-ovog="" data-ner="Азжаргал" data-job="">4. Азжаргал</option>
+      <option value="6" data-no="5" data-ovog="Цэдэн-Иш" data-ner="Анар" data-job="Бренд менежер">5. Цэдэн-Иш Анар - Бренд менежер</option>
+      <option value="7" data-no="6" data-ovog="Хажидмаа" data-ner="Бархүү" data-job="Борлуулалтын албаны дарга">6. Хажидмаа Бархүү - Борлуулалтын албаны дарга</option>
+      <option value="8" data-no="7" data-ovog="Балжинням" data-ner="Батбаяр" data-job="Санхүүгийн шинжээч">7. Балжинням Батбаяр - Санхүүгийн шинжээч</option>
+      <option value="9" data-no="8" data-ovog="Амарбаясгалан" data-ner="Бат-Орших" data-job="Маркетинг АД">8. Амарбаясгалан Бат-Орших - Маркетинг АД</option>
+      <option value="10" data-no="9" data-ovog="Энхгэрэл" data-ner="Батцацрал" data-job="Тогооч">9. Энхгэрэл Батцацрал - Тогооч</option>
+      <option value="11" data-no="10" data-ovog="Баттулга" data-ner="Бат-эрдэнэ" data-job="Засварчин">10. Баттулга Бат-эрдэнэ - Засварчин</option>
+      <option value="12" data-no="11" data-ovog="Цогтгэрэл" data-ner="Баянжаргал" data-job="Барааны нөөцийн мэргэжилтэн">11. Цогтгэрэл Баянжаргал - Барааны нөөцийн мэргэжилтэн</option>
+      <option value="13" data-no="12" data-ovog="Мөнхсүх" data-ner="Биндэръяа" data-job="Ахлах нягтлан бодогч">12. Мөнхсүх Биндэръяа - Ахлах нягтлан бодогч</option>
+      <option value="14" data-no="13" data-ovog="Анжаа" data-ner="Болортуяа" data-job="Борлуулалтын менежер">13. Анжаа Болортуяа - Борлуулалтын менежер</option>
+      <option value="15" data-no="14" data-ovog="Гандорж" data-ner="Болорцэцэг" data-job="Мэдээллийн ажилтан">14. Гандорж Болорцэцэг - Мэдээллийн ажилтан</option>
+      <option value="16" data-no="15" data-ovog="Батболд" data-ner="Болорчимэг" data-job="Худалдааны зөвлөх">15. Батболд Болорчимэг - Худалдааны зөвлөх</option>
+      <option value="17" data-no="16" data-ovog="Дашдондов" data-ner="Буянзаяа" data-job="Засварчин">16. Дашдондов Буянзаяа - Засварчин</option>
+      <option value="18" data-no="17" data-ovog="Батзаяа" data-ner="Бямбасүрэн" data-job="Хүний нөөцийн менежер">17. Батзаяа Бямбасүрэн - Хүний нөөцийн менежер</option>
+      <option value="19" data-no="18" data-ovog="Галсандорж" data-ner="Ганбаатар" data-job="Эелдэг Харуул">18. Галсандорж Ганбаатар - Эелдэг Харуул</option>
+      <option value="20" data-no="19" data-ovog="Цэнджав" data-ner="Гансум" data-job="Засварчин">19. Цэнджав Гансум - Засварчин</option>
+      <option value="21" data-no="20" data-ovog="Цэрэндагва" data-ner="Гантөмөр" data-job="Засварчин">20. Цэрэндагва Гантөмөр - Засварчин</option>
+      <option value="22" data-no="21" data-ovog="Намжаа" data-ner="Ганчимэг" data-job="Орчин бүрдүүлэгч">21. Намжаа Ганчимэг - Орчин бүрдүүлэгч</option>
+      <option value="23" data-no="22" data-ovog="Батчулуун" data-ner="Ганчулуун" data-job="Салбарын борлуул/ ажилтан">22. Батчулуун Ганчулуун - Салбарын борлуул/ ажилтан</option>
+      <option value="24" data-no="23" data-ovog="Батбэх" data-ner="Даваабаяр" data-job="Аккумуляторчин">23. Батбэх Даваабаяр - Аккумуляторчин</option>
+      <option value="25" data-no="24" data-ovog="Бат-Эрдэнэ" data-ner="Даваасүрэн" data-job="Тооцооны нягтлан бодогч">24. Бат-Эрдэнэ Даваасүрэн - Тооцооны нягтлан бодогч</option>
+      <option value="26" data-no="25" data-ovog="Ренчин" data-ner="Дашпагам" data-job="Ахлах нягтлан бодогч">25. Ренчин Дашпагам - Ахлах нягтлан бодогч</option>
+      <option value="27" data-no="26" data-ovog="Бэх-Очир" data-ner="Есөнжаргал" data-job="ББСБ-ын захирал">26. Бэх-Очир Есөнжаргал - ББСБ-ын захирал</option>
+      <option value="28" data-no="27" data-ovog="Баярхүү" data-ner="Золжаргал" data-job="Борлуулалтын менежер">27. Баярхүү Золжаргал - Борлуулалтын менежер</option>
+      <option value="29" data-no="28" data-ovog="Шударгамаа" data-ner="Зоригтбаатар" data-job="Харилцагчийн үйлчил/ ахлах">28. Шударгамаа Зоригтбаатар - Харилцагчийн үйлчил/ ахлах</option>
+      <option value="30" data-no="29" data-ovog="Баярхүү" data-ner="Зулбаяр" data-job="IT">29. Баярхүү Зулбаяр - IT</option>
+      <option value="31" data-no="30" data-ovog="Энхбаатар" data-ner="Лувсандамба" data-job="Ерөнхий Инженер">30. Энхбаатар Лувсандамба - Ерөнхий Инженер</option>
+      <option value="32" data-no="31" data-ovog="Баатархүү" data-ner="Луу-Очир" data-job="Сантехникч">31. Баатархүү Луу-Очир - Сантехникч</option>
+      <option value="33" data-no="32" data-ovog="Тулгаа" data-ner="Мөнхзориг" data-job="Ахлах нягтлан бодогч">32. Тулгаа Мөнхзориг - Ахлах нягтлан бодогч</option>
+      <option value="34" data-no="33" data-ovog="Оюунчимэг" data-ner="Мөнх-Учрал" data-job="Инженер">33. Оюунчимэг Мөнх-Учрал - Инженер</option>
+      <option value="35" data-no="34" data-ovog="Баасанбилэг" data-ner="Намжилсүрэн" data-job="Оффис менежер">34. Баасанбилэг Намжилсүрэн - Оффис менежер</option>
+      <option value="36" data-no="35" data-ovog="Дэмбэрэл" data-ner="Наранбаяр" data-job="График дизайнер">35. Дэмбэрэл Наранбаяр - График дизайнер</option>
+      <option value="37" data-no="36" data-ovog="Гүржав" data-ner="Нарантуяа" data-job="Орчин бүрдүүлэгч">36. Гүржав Нарантуяа - Орчин бүрдүүлэгч</option>
+      <option value="38" data-no="37" data-ovog="Загдхорлоо" data-ner="Номин-Эрдэнэ" data-job="Мэдээллийн ажилтан">37. Загдхорлоо Номин-Эрдэнэ - Мэдээллийн ажилтан</option>
+      <option value="39" data-no="38" data-ovog="" data-ner="Номин-Эрдэнэ" data-job="Брэнд менежер">38. Номин-Эрдэнэ - Брэнд менежер</option>
+      <option value="40" data-no="39" data-ovog="Эрдэнэбаяр" data-ner="Норжмаа" data-job="Мэдээллийн ажилтан">39. Эрдэнэбаяр Норжмаа - Мэдээллийн ажилтан</option>
+      <option value="41" data-no="40" data-ovog="Цэнджав" data-ner="Нямцэрэн" data-job="Салбарын менежер">40. Цэнджав Нямцэрэн - Салбарын менежер</option>
+      <option value="42" data-no="41" data-ovog="Цогтбаяр" data-ner="Одхүслэн" data-job="Бренд менежер">41. Цогтбаяр Одхүслэн - Бренд менежер</option>
+      <option value="43" data-no="42" data-ovog="Алтанхүрэл" data-ner="Отгонтуяа" data-job="Чанарын менежер">42. Алтанхүрэл Отгонтуяа - Чанарын менежер</option>
+      <option value="44" data-no="43" data-ovog="Мөнхбаяр" data-ner="Оюунгэрэл" data-job="Нягтлан бодогч">43. Мөнхбаяр Оюунгэрэл - Нягтлан бодогч</option>
+      <option value="45" data-no="44" data-ovog="Сарантуяа" data-ner="Өлзийхишиг" data-job="Брэнд менежер">44. Сарантуяа Өлзийхишиг - Брэнд менежер</option>
+      <option value="46" data-no="45" data-ovog="Мазаалай" data-ner="Сарангэрэл" data-job="Үйл ажил/ хяналтын мен">45. Мазаалай Сарангэрэл - Үйл ажил/ хяналтын мен</option>
+      <option value="47" data-no="46" data-ovog="Цэрэндорж" data-ner="Сармандах" data-job="Тооцооны нягтлан бодогч">46. Цэрэндорж Сармандах - Тооцооны нягтлан бодогч</option>
+      <option value="48" data-no="47" data-ovog="Оюун" data-ner="Саруул" data-job="Борлуулалтын менежер">47. Оюун Саруул - Борлуулалтын менежер</option>
+      <option value="49" data-no="48" data-ovog="Баттулга" data-ner="Төгс-Эрдэнэ" data-job="ТУЗ-ын гишүүн">48. Баттулга Төгс-Эрдэнэ - ТУЗ-ын гишүүн</option>
+      <option value="50" data-no="49" data-ovog="Дэмид" data-ner="Тэмүүжин" data-job="Маркетингийн менежер">49. Дэмид Тэмүүжин - Маркетингийн менежер</option>
+      <option value="51" data-no="50" data-ovog="Батсайхан" data-ner="Ууганчимэг" data-job="Гүйцэтгэх захирал">50. Батсайхан Ууганчимэг - Гүйцэтгэх захирал</option>
+      <option value="52" data-no="51" data-ovog="" data-ner="Халиунаа" data-job="">51. Халиунаа</option>
+      <option value="53" data-no="52" data-ovog="Лхамрагчаа" data-ner="Цог-Эрдэнэ" data-job="Засварчин">52. Лхамрагчаа Цог-Эрдэнэ - Засварчин</option>
+      <option value="54" data-no="53" data-ovog="Ярман" data-ner="Цэннуурмаа" data-job="Санхүүгийн албаны дарга">53. Ярман Цэннуурмаа - Санхүүгийн албаны дарга</option>
+      <option value="55" data-no="54" data-ovog="Оюунгэрэл" data-ner="Цэцэгдарь" data-job="Брэнд менежер">54. Оюунгэрэл Цэцэгдарь - Брэнд менежер</option>
+      <option value="56" data-no="55" data-ovog="Баасансүрэн" data-ner="Цэцэглэн" data-job="ХАБЭА мэргэжилтэн">55. Баасансүрэн Цэцэглэн - ХАБЭА мэргэжилтэн</option>
+      <option value="57" data-no="56" data-ovog="Буд" data-ner="Чулуунбат" data-job="Салбарын албаны дарга">56. Буд Чулуунбат - Салбарын албаны дарга</option>
+      <option value="58" data-no="57" data-ovog="Чойдорж" data-ner="Элбэрэлт" data-job="Төв салбарын менежер">57. Чойдорж Элбэрэлт - Төв салбарын менежер</option>
+      <option value="59" data-no="58" data-ovog="Буянбаатар" data-ner="Энхбуян" data-job="Бүтээг/ хөгжүүл/ менежер">58. Буянбаатар Энхбуян - Бүтээг/ хөгжүүл/ менежер</option>
+      <option value="60" data-no="59" data-ovog="Лхагвасүрэн" data-ner="Энхжаргал" data-job="Орчин бүрдүүлэгч">59. Лхагвасүрэн Энхжаргал - Орчин бүрдүүлэгч</option>
+      <option value="61" data-no="60" data-ovog="Жаргалсайхан" data-ner="Энхсайхан" data-job="Бренд менежер">60. Жаргалсайхан Энхсайхан - Бренд менежер</option>
+      <option value="62" data-no="61" data-ovog="Баттогтоол" data-ner="Энхтайван" data-job="Засварчин">61. Баттогтоол Энхтайван - Засварчин</option>
+      <option value="63" data-no="62" data-ovog="Пүрэврагчаа" data-ner="Энхцоож" data-job="ББСБ-ын менежер">62. Пүрэврагчаа Энхцоож - ББСБ-ын менежер</option>
+      <option value="64" data-no="63" data-ovog="Дашням" data-ner="Энхцэцэг" data-job="Борлуулалтын менежер">63. Дашням Энхцэцэг - Борлуулалтын менежер</option>
+      <option value="65" data-no="64" data-ovog="Цэдэнсодном" data-ner="Эрдэнэбат" data-job="ЭелдэгХаруул">64. Цэдэнсодном Эрдэнэбат - ЭелдэгХаруул</option>
+      <option value="66" data-no="65" data-ovog="" data-ner="Шинэ хүн мартекинг" data-job="">65. Шинэ хүн мартекинг</option>
+      <option value="67" data-no="66" data-ovog="" data-ner="Шагдаржав" data-job="">66. Шагдаржав</option>
+      <option value="68" data-no="67" data-ovog="" data-ner="Лхагвадулам" data-job="">67. Лхагвадулам</option>
+      <option value="69" data-no="68" data-ovog="22салбар худалдааны зөвлөх" data-ner="Ц.Дулмаа" data-job="">68. 22салбар худалдааны зөвлөх Ц.Дулмаа</option>
+      <option value="70" data-no="69" data-ovog="маркетинг дизайнар" data-ner="Төрболд" data-job="">69. маркетинг дизайнар Төрболд</option>
+      <option value="71" data-no="70" data-ovog="" data-ner="Отгонбаяр" data-job="">70. Отгонбаяр</option>
+      <option value="72" data-no="71" data-ovog="Э" data-ner="Чимгээ" data-job="ББ зээлийн ажилтан">71. Э Чимгээ - ББ зээлийн ажилтан</option>
+      <option value="73" data-no="72" data-ovog="Ц" data-ner="Баасанжаргал" data-job="">72. Ц Баасанжаргал</option>
+      <option value="74" data-no="73" data-ovog="шинэ камер" data-ner="Ерөөлтням" data-job="">73. шинэ камер Ерөөлтням</option>
+      <option value="75" data-no="74" data-ovog="" data-ner="Мөнхтэмцэл" data-job="">74. Мөнхтэмцэл</option>
+      <option value="76" data-no="75" data-ovog="" data-ner="Болдбаатар" data-job="">75. Болдбаатар</option>
+      <option value="77" data-no="76" data-ovog="" data-ner="Хүрэлсүх" data-job="">76. Хүрэлсүх</option>
+      <option value="78" data-no="77" data-ovog="" data-ner="Бямбацогт" data-job="">77. Бямбацогт</option>
+      <option value="79" data-no="78" data-ovog="" data-ner="Мөнхзул" data-job="">78. Мөнхзул</option>
+    </select>
+
+    <label class="form-label">Огноо сонгох</label>
+    <select id="date" class="form-select mb-3">
+      <option value="">Огноо сонгоно уу</option>
+      <option value="5/1">5/1</option>
+      <option value="5/2">5/2</option>
+      <option value="5/3">5/3</option>
+      <option value="5/4">5/4</option>
+      <option value="5/5">5/5</option>
+      <option value="5/6">5/6</option>
+      <option value="5/7">5/7</option>
+      <option value="5/8">5/8</option>
+      <option value="5/9">5/9</option>
+      <option value="5/10">5/10</option>
+      <option value="5/11">5/11</option>
+      <option value="5/12">5/12</option>
+      <option value="5/13">5/13</option>
+      <option value="5/14">5/14</option>
+      <option value="5/15">5/15</option>
+      <option value="5/16">5/16</option>
+      <option value="5/17">5/17</option>
+      <option value="5/18">5/18</option>
+      <option value="5/19">5/19</option>
+      <option value="5/20">5/20</option>
+      <option value="5/21">5/21</option>
+      <option value="5/22">5/22</option>
+      <option value="5/23">5/23</option>
+      <option value="5/24">5/24</option>
+      <option value="5/25">5/25</option>
+      <option value="5/26">5/26</option>
+      <option value="5/27">5/27</option>
+      <option value="5/28">5/28</option>
+      <option value="5/29">5/29</option>
+      <option value="5/30">5/30</option>
+      <option value="5/31">5/31</option>
+    </select>
+
+    <button class="btn btn-success w-100 mb-2" onclick="saveStatus('ate')">
+      Хоол идсэн
+    </button>
+
+    <button class="btn btn-danger w-100" onclick="saveStatus('not_ate')">
+      Хоол идээгүй
+    </button>
+
+    <div id="msg"></div>
+
+  </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbw9MQN9PbnrlXdA1gPGI2NN4fq8KrILcF4dgmUHCztMC2ZhxQSbmiMDgGz8GqccYeKLBA/exec";
+
+async function saveStatus(status) {
+  const employee = document.getElementById("employee");
+  const selected = employee.options[employee.selectedIndex];
+
+  const row = employee.value;
+  const date = document.getElementById("date").value;
+  const msg = document.getElementById("msg");
+
+  if (!row) {
+    msg.innerHTML = "<span class='text-danger'>Ажилтан сонгоно уу</span>";
+    return;
+  }
+
+  if (!date) {
+    msg.innerHTML = "<span class='text-danger'>Огноо сонгоно уу</span>";
+    return;
+  }
+
+  msg.innerHTML = "Хадгалж байна...";
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        row: row,
+        date: date,
+        status: status,
+        no: selected.dataset.no,
+        ovog: selected.dataset.ovog,
+        ner: selected.dataset.ner,
+        job: selected.dataset.job
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      msg.innerHTML = "<span class='text-success'>" + data.message + "</span>";
+    } else {
+      msg.innerHTML = "<span class='text-danger'>" + data.message + "</span>";
+    }
+
+  } catch (err) {
+    console.log(err);
+    msg.innerHTML = "<span class='text-danger'>Apps Script холболт алдаа</span>";
+  }
+}
+</script>
+
+</body>
+</html>
