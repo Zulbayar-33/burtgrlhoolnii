@@ -43,11 +43,22 @@
 
     <h3 class="title">А хоол идсэн бүртгэл</h3>
 
+    <!-- 🔍 SEARCH -->
+    <input 
+      type="text" 
+      id="searchInput" 
+      class="form-control mb-2" 
+      placeholder="Нэрээр хайх..."
+      onkeyup="filterEmployees()"
+    />
+
+    <!-- 👇 YOUR SELECT -->
     <label class="form-label">Ажилтан сонгох</label>
     <select id="employee" class="form-select mb-3">
-      <option value="">Ажилтан сонгоно уу</option>
 
-      <option value="2" data-no="1" data-ovog="Тайвансайхан" data-ner="Алимаа" data-job="Хүний нөөцийн албаны дарга">1. Тайвансайхан Алимаа - Хүний нөөцийн албаны дарга</option>
+      <!-- KEEP ALL YOUR OPTIONS HERE (UNCHANGED) -->
+      <!-- Example (you already have full list) -->
+         <option value="2" data-no="1" data-ovog="Тайвансайхан" data-ner="Алимаа" data-job="Хүний нөөцийн албаны дарга">1. Тайвансайхан Алимаа - Хүний нөөцийн албаны дарга</option>
       <option value="3" data-no="2" data-ovog="Зоригтбаатар" data-ner="Амарзаяа" data-job="Төв салбар худалдааны зөвлөх">2. Зоригтбаатар Амарзаяа - Төв салбар худалдааны зөвлөх</option>
       <option value="4" data-no="3" data-ovog="" data-ner="Алтантулга" data-job="">3. Алтантулга</option>
       <option value="5" data-no="4" data-ovog="" data-ner="Азжаргал" data-job="">4. Азжаргал</option>
@@ -125,49 +136,61 @@
       <option value="77" data-no="76" data-ovog="" data-ner="Хүрэлсүх" data-job="">76. Хүрэлсүх</option>
       <option value="78" data-no="77" data-ovog="" data-ner="Бямбацогт" data-job="">77. Бямбацогт</option>
       <option value="79" data-no="78" data-ovog="" data-ner="Мөнхзул" data-job="">78. Мөнхзул</option>
-      <option value="80" data-no="79" data-ovog="" data-ner="Мягмаржав" data-job="">79. Мягмаржав</option>
-      <option value="81" data-no="80" data-ovog="" data-ner="Пүрэвсүрэн" data-job="">80. Пүрэвсүрэн</option>
+      <option value="79" data-no="78" data-ovog="" data-ner="Мөнхзул" data-job="">
+        78. Мөнхзул
+      </option>
+
+      <option value="80" data-no="79" data-ovog="" data-ner="Мягмаржав" data-job="">
+        79. Мягмаржав
+      </option>
+
+      <option value="81" data-no="80" data-ovog="" data-ner="Пүрэвсүрэн" data-job="">
+        80. Пүрэвсүрэн
+      </option>
+
     </select>
 
+    <!-- 📅 DATE -->
     <label class="form-label">Огноо сонгох</label>
     <select id="date" class="form-select mb-3">
       <option value="">Огноо сонгоно уу</option>
-       <option value="4/25">4/25</option>
-  <option value="4/26">4/26</option>
-  <option value="4/27">4/27</option>
-  <option value="4/28">4/28</option>
-  <option value="4/29">4/29</option>
-  <option value="4/30">4/30</option>
 
-  <!-- May -->
-  <option value="5/1">5/1</option>
-  <option value="5/2">5/2</option>
-  <option value="5/3">5/3</option>
-  <option value="5/4">5/4</option>
-  <option value="5/5">5/5</option>
-  <option value="5/6">5/6</option>
-  <option value="5/7">5/7</option>
-  <option value="5/8">5/8</option>
-  <option value="5/9">5/9</option>
-  <option value="5/10">5/10</option>
-  <option value="5/11">5/11</option>
-  <option value="5/12">5/12</option>
-  <option value="5/13">5/13</option>
-  <option value="5/14">5/14</option>
-  <option value="5/15">5/15</option>
-  <option value="5/16">5/16</option>
-  <option value="5/17">5/17</option>
-  <option value="5/18">5/18</option>
-  <option value="5/19">5/19</option>
-  <option value="5/20">5/20</option>
-  <option value="5/21">5/21</option>
-  <option value="5/22">5/22</option>
-  <option value="5/23">5/23</option>
-  <option value="5/24">5/24</option>
-  <option value="5/25">5/25</option>
-  <option value="5/26">5/26</option>
+      <option value="4/25">4/25</option>
+      <option value="4/26">4/26</option>
+      <option value="4/27">4/27</option>
+      <option value="4/28">4/28</option>
+      <option value="4/29">4/29</option>
+      <option value="4/30">4/30</option>
+
+      <option value="5/1">5/1</option>
+      <option value="5/2">5/2</option>
+      <option value="5/3">5/3</option>
+      <option value="5/4">5/4</option>
+      <option value="5/5">5/5</option>
+      <option value="5/6">5/6</option>
+      <option value="5/7">5/7</option>
+      <option value="5/8">5/8</option>
+      <option value="5/9">5/9</option>
+      <option value="5/10">5/10</option>
+      <option value="5/11">5/11</option>
+      <option value="5/12">5/12</option>
+      <option value="5/13">5/13</option>
+      <option value="5/14">5/14</option>
+      <option value="5/15">5/15</option>
+      <option value="5/16">5/16</option>
+      <option value="5/17">5/17</option>
+      <option value="5/18">5/18</option>
+      <option value="5/19">5/19</option>
+      <option value="5/20">5/20</option>
+      <option value="5/21">5/21</option>
+      <option value="5/22">5/22</option>
+      <option value="5/23">5/23</option>
+      <option value="5/24">5/24</option>
+      <option value="5/25">5/25</option>
+      <option value="5/26">5/26</option>
     </select>
 
+    <!-- BUTTONS -->
     <button class="btn btn-success w-100 mb-2" onclick="saveStatus('ate')">
       Хоол идсэн
     </button>
@@ -184,6 +207,24 @@
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbw9MQN9PbnrlXdA1gPGI2NN4fq8KrILcF4dgmUHCztMC2ZhxQSbmiMDgGz8GqccYeKLBA/exec";
 
+// 🔍 SEARCH FUNCTION
+function filterEmployees() {
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const select = document.getElementById("employee");
+  const options = select.getElementsByTagName("option");
+
+  for (let i = 0; i < options.length; i++) {
+    const text = options[i].text.toLowerCase();
+
+    if (text.includes(input)) {
+      options[i].style.display = "";
+    } else {
+      options[i].style.display = "none";
+    }
+  }
+}
+
+// SAVE
 async function saveStatus(status) {
   const employee = document.getElementById("employee");
   const selected = employee.options[employee.selectedIndex];
