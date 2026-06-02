@@ -194,6 +194,7 @@
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbzK4VglGQEPRt7UMi44H-CgEt-KUh0WGVbpnB7Iia-e2ePKase0icddbM0iConSdsEBcA/exec";
 
+
 function filterEmployees() {
   const input = document.getElementById("searchInput").value.toLowerCase();
   const select = document.getElementById("employee");
@@ -224,14 +225,17 @@ async function saveStatus() {
   }
 
   const now = new Date();
-  const minutes = now.getHours() * 60 + now.getMinutes();
 
-  const start = 9 * 60;
-  const end = 18* 60 + 30;
+  const currentMinutes =
+    now.getHours() * 60 +
+    now.getMinutes();
+
+  const startMinutes = 9 * 60;
+  const endMinutes = 11 * 60 + 30;
 
   let actionStatus = "approved";
 
-  if (minutes < start || minutes > end) {
+  if (currentMinutes < startMinutes || currentMinutes > endMinutes) {
     alert("Sorry, you are late for lunch. Admin approval pending.");
     actionStatus = "pending";
   }
@@ -256,17 +260,12 @@ async function saveStatus() {
 
     const data = await res.json();
 
-    if (data.success) {
-      msg.innerHTML = "<span class='text-success'>" + data.message + "</span>";
-    } else {
-      msg.innerHTML = "<span class='text-danger'>" + data.message + "</span>";
-    }
+    msg.innerHTML = data.success
+      ? "<span class='text-success'>" + data.message + "</span>"
+      : "<span class='text-danger'>" + data.message + "</span>";
 
   } catch (err) {
     msg.innerHTML = "<span class='text-danger'>Apps Script холболт алдаа</span>";
   }
 }
 </script>
-
-</body>
-</html>
