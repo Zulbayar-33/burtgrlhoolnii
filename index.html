@@ -43,22 +43,17 @@
 
     <h3 class="title">А хоол идсэн бүртгэл</h3>
 
-    <!-- 🔍 SEARCH -->
-    <input 
-      type="text" 
-      id="searchInput" 
-      class="form-control mb-2" 
-      placeholder="Нэрээр хайх..."
-      onkeyup="filterEmployees()"
-    />
+    <div class="input-group mb-2">
+      <input type="text" id="searchInput" class="form-control" placeholder="Нэрээр хайх...">
+      <button class="btn btn-primary" onclick="filterEmployees()">Хайх</button>
+    </div>
 
-    <!-- 👇 YOUR SELECT -->
     <label class="form-label">Ажилтан сонгох</label>
     <select id="employee" class="form-select mb-3">
 
-      <!-- KEEP ALL YOUR OPTIONS HERE (UNCHANGED) -->
-      <!-- Example (you already have full list) -->
-         <option value="2" data-no="1" data-ovog="Тайвансайхан" data-ner="Алимаа" data-job="Хүний нөөцийн албаны дарга">1. Тайвансайхан Алимаа - Хүний нөөцийн албаны дарга</option>
+      <!-- ЭНД ӨӨРИЙН БҮХ OPTION-ОО ХЭВЭЭР НЬ ХИЙ -->
+      <!-- Таны өмнөх option list яг энэ хэсэгт орно -->
+ <option value="2" data-no="1" data-ovog="Тайвансайхан" data-ner="Алимаа" data-job="Хүний нөөцийн албаны дарга">1. Тайвансайхан Алимаа - Хүний нөөцийн албаны дарга</option>
       <option value="3" data-no="2" data-ovog="Зоригтбаатар" data-ner="Амарзаяа" data-job="Төв салбар худалдааны зөвлөх">2. Зоригтбаатар Амарзаяа - Төв салбар худалдааны зөвлөх</option>
       <option value="4" data-no="3" data-ovog="" data-ner="Алтантулга" data-job="">3. Алтантулга</option>
       <option value="5" data-no="4" data-ovog="" data-ner="Азжаргал" data-job="">4. Азжаргал</option>
@@ -150,18 +145,15 @@
 
     </select>
 
-    <!-- 📅 DATE -->
     <label class="form-label">Огноо сонгох</label>
     <select id="date" class="form-select mb-3">
       <option value="">Огноо сонгоно уу</option>
-
       <option value="4/25">4/25</option>
       <option value="4/26">4/26</option>
       <option value="4/27">4/27</option>
       <option value="4/28">4/28</option>
       <option value="4/29">4/29</option>
       <option value="4/30">4/30</option>
-
       <option value="5/1">5/1</option>
       <option value="5/2">5/2</option>
       <option value="5/3">5/3</option>
@@ -190,13 +182,8 @@
       <option value="5/26">5/26</option>
     </select>
 
-    <!-- BUTTONS -->
-    <button class="btn btn-success w-100 mb-2" onclick="saveStatus('ate')">
+    <button class="btn btn-success w-100" onclick="saveStatus()">
       Хоол идсэн
-    </button>
-
-    <button class="btn btn-danger w-100" onclick="saveStatus('not_ate')">
-      Хоол идээгүй
     </button>
 
     <div id="msg"></div>
@@ -205,9 +192,8 @@
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbyTvOjito6xltbkxCXwZI8ET1sCyq3VoabmcYpjSSukF1SlJPrJrcFiraj6x9X1snMfKw/exec";
+const API_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL";
 
-// 🔍 SEARCH FUNCTION
 function filterEmployees() {
   const input = document.getElementById("searchInput").value.toLowerCase();
   const select = document.getElementById("employee");
@@ -215,17 +201,11 @@ function filterEmployees() {
 
   for (let i = 0; i < options.length; i++) {
     const text = options[i].text.toLowerCase();
-
-    if (text.includes(input)) {
-      options[i].style.display = "";
-    } else {
-      options[i].style.display = "none";
-    }
+    options[i].style.display = text.includes(input) ? "" : "none";
   }
 }
 
-// SAVE
-async function saveStatus(status) {
+async function saveStatus() {
   const employee = document.getElementById("employee");
   const selected = employee.options[employee.selectedIndex];
 
@@ -243,15 +223,30 @@ async function saveStatus(status) {
     return;
   }
 
+  const now = new Date();
+  const minutes = now.getHours() * 60 + now.getMinutes();
+
+  const start = 9 * 60;
+  const end = 11 * 60 + 30;
+
+  let actionStatus = "approved";
+
+  if (minutes < start || minutes > end) {
+    alert("Sorry, you are late for lunch. Admin approval pending.");
+    actionStatus = "pending";
+  }
+
   msg.innerHTML = "Хадгалж байна...";
 
   try {
     const res = await fetch(API_URL, {
       method: "POST",
       body: JSON.stringify({
+        action: "save",
         row: row,
         date: date,
-        status: status,
+        status: "ate",
+        actionStatus: actionStatus,
         no: selected.dataset.no,
         ovog: selected.dataset.ovog,
         ner: selected.dataset.ner,
@@ -268,7 +263,6 @@ async function saveStatus(status) {
     }
 
   } catch (err) {
-    console.log(err);
     msg.innerHTML = "<span class='text-danger'>Apps Script холболт алдаа</span>";
   }
 }
