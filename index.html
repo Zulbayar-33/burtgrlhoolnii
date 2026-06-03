@@ -240,31 +240,27 @@ async function saveStatus() {
   }
 
   msg.innerHTML = "Хадгалж байна...";
+try {
+  await fetch(API_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify({
+      action: "save",
+      row: row,
+      date: date,
+      status: "ate",
+      actionStatus: actionStatus,
+      no: selected.dataset.no,
+      ovog: selected.dataset.ovog,
+      ner: selected.dataset.ner,
+      job: selected.dataset.job
+    })
+  });
 
-  try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "save",
-        row: row,
-        date: date,
-        status: "ate",
-        actionStatus: actionStatus,
-        no: selected.dataset.no,
-        ovog: selected.dataset.ovog,
-        ner: selected.dataset.ner,
-        job: selected.dataset.job
-      })
-    });
+  msg.innerHTML = "<span class='text-success'>Хадгаллаа</span>";
 
-    const data = await res.json();
-
-    msg.innerHTML = data.success
-      ? "<span class='text-success'>" + data.message + "</span>"
-      : "<span class='text-danger'>" + data.message + "</span>";
-
-  } catch (err) {
-    msg.innerHTML = "<span class='text-danger'>Apps Script холболт алдаа</span>";
-  }
+} catch (err) {
+  console.log(err);
+  msg.innerHTML = "<span class='text-danger'>Apps Script холболт алдаа</span>";
 }
 </script>
