@@ -29,74 +29,86 @@ async function loadPending() {
   const list = document.getElementById("list");
   list.innerHTML = "Уншиж байна...";
 
-  const res = await fetch(API_URL + "?action=pending");
-  const data = await res.json();
+  try {
+    const res = await fetch(API_URL + "?action=pending");
+    const data = await res.json();
 
-  if (!data.success || data.items.length === 0) {
-    list.innerHTML = "<div class='alert alert-info'>Pending бүртгэл байхгүй</div>";
-    return;
-  }
+    if (!data.success || !data.items || data.items.length === 0) {
+      list.innerHTML = "<div class='alert alert-info'>Pending бүртгэл байхгүй</div>";
+      return;
+    }
 
-  let html = `
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>№</th>
-          <th>Овог</th>
-          <th>Нэр</th>
-          <th>Албан тушаал</th>
-          <th>Огноо</th>
-          <th>Үйлдэл</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  data.items.forEach(item => {
-    html += `
-      <tr>
-        <td>${item.no}</td>
-        <td>${item.ovog}</td>
-        <td>${item.ner}</td>
-        <td>${item.job}</td>
-        <td>${item.date}</td>
-        <td>
-          <button class="btn btn-success btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'accept')">
-            Approve
-          </button>
-
-          <button class="btn btn-danger btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'reject')">
-            Reject
-          </button>
-
-          <button class="btn btn-secondary btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'remove')">
-            Remove
-          </button>
-        </td>
-      </tr>
+    let html = `
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>№</th>
+            <th>Овог</th>
+            <th>Нэр</th>
+            <th>Албан тушаал</th>
+            <th>Огноо</th>
+            <th>Үйлдэл</th>
+          </tr>
+        </thead>
+        <tbody>
     `;
-  });
 
-  html += "</tbody></table>";
-  list.innerHTML = html;
+    data.items.forEach(item => {
+      html += `
+        <tr>
+          <td>${item.no}</td>
+          <td>${item.ovog}</td>
+          <td>${item.ner}</td>
+          <td>${item.job}</td>
+          <td>${item.date}</td>
+          <td>
+            <button class="btn btn-success btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'accept')">
+              Approve
+            </button>
+
+            <button class="btn btn-danger btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'reject')">
+              Reject
+            </button>
+
+            <button class="btn btn-secondary btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'remove')">
+              Remove
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += "</tbody></table>";
+    list.innerHTML = html;
+
+  } catch (err) {
+    console.log(err);
+    list.innerHTML = "<div class='alert alert-danger'>Pending жагсаалт уншихад алдаа гарлаа</div>";
+  }
 }
 
 async function adminAction(row, date, decision) {
   if (!confirm("Are you sure? " + decision)) return;
 
-  const res = await fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "admin",
-      row: row,
-      date: date,
-      adminDecision: decision
-    })
-  });
+  try {
+    await fetch(API_URL, {
+      method: "POST",
+      mode: "no-cors",
+      body: JSON.stringify({
+        action: "admin",
+        row: row,
+        date: date,
+        adminDecision: decision
+      })
+    });
 
-  const data = await res.json();
-  alert(data.message);
-  loadPending();
+    alert("Saved. Please refresh.");
+    loadPending();
+
+  } catch (err) {
+    console.log(err);
+    alert("Apps Script холболт алдаа");
+  }
 }
 
 loadPending();
