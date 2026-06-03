@@ -239,29 +239,30 @@ async function saveStatus() {
 
   msg.innerHTML = "Хадгалж байна...";
 
-  try {
-  const formData = new FormData();
+    try {
+    const formData = new FormData();
 
-  formData.append("action", "save");
-  formData.append("row", row);
-  formData.append("date", date);
-  formData.append("status", "ate");
-  formData.append("actionStatus", actionStatus);
-  formData.append("no", selected.dataset.no || "");
-  formData.append("ovog", selected.dataset.ovog || "");
-  formData.append("ner", selected.dataset.ner || "");
-  formData.append("job", selected.dataset.job || "");
+    formData.append("action", "save");
+    formData.append("row", row);
+    formData.append("date", date);
+    formData.append("status", "ate");
+    formData.append("actionStatus", actionStatus);
+    formData.append("no", selected.dataset.no || "");
+    formData.append("ovog", selected.dataset.ovog || "");
+    formData.append("ner", selected.dataset.ner || "");
+    formData.append("job", selected.dataset.job || "");
 
-  await fetch(API_URL, {
-    method: "POST",
-    mode: "no-cors",
-    body: formData
-  });
+    await fetch(API_URL, {
+      method: "POST",
+      mode: "no-cors",
+      body: formData
+    });
 
-  msg.innerHTML = "<span class='text-success'>Хадгаллаа</span>";
+    msg.innerHTML = "<span class='text-success'>Хадгаллаа</span>";
 
-} catch (err) {
-  console.log(err);
-  msg.innerHTML = "<span class='text-danger'>Apps Script холболт алдаа</span>";
+  } catch (err) {
+    console.log(err);
+    msg.innerHTML = "<span class='text-danger'>Apps Script холболт алдаа</span>";
+  }
 }
 </script>
