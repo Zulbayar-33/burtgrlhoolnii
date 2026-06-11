@@ -55,36 +55,26 @@ const API_URL = "https://script.google.com/macros/s/AKfycbzfWYVnj-s4usdnqvixf-xF
 let allEmployees = [];
 
 window.onload = function () {
-  loadEmployeesJsonp();
+  loadEmployeesFrame();
 
   document.getElementById("searchInput").addEventListener("keyup", function(e) {
-    if (e.key === "Enter") {
-      filterEmployees();
-    }
+    if (e.key === "Enter") filterEmployees();
   });
 };
 
-function loadEmployeesJsonp() {
-  const url = API_URL + "?action=employees&callback=loadEmployees&t=" + Date.now();
-
-  alert("Calling API: " + url);
-
-  const s = document.createElement("script");
-  s.src = url;
-
-  s.onload = function () {
-    alert("Script tag loaded");
-  };
-
-  s.onerror = function () {
-    alert("Script tag error");
-  };
-
-  document.body.appendChild(s);
+function loadEmployeesFrame() {
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  iframe.src = API_URL + "?action=employeesFrame&t=" + Date.now();
+  document.body.appendChild(iframe);
 }
 
-window.loadEmployees = function(data) {
-  if (!data || !data.success) {
+window.addEventListener("message", function(event) {
+  const data = event.data;
+
+  if (!data || data.type !== "employees") return;
+
+  if (!data.success) {
     document.getElementById("msg").innerHTML =
       "<span class='text-danger'>Ажилтан татах алдаа</span>";
     return;
@@ -95,7 +85,7 @@ window.loadEmployees = function(data) {
 
   document.getElementById("msg").innerHTML =
     "<span class='text-success'>Ажилтан татагдлаа: " + allEmployees.length + "</span>";
-};
+});
 
 function renderEmployees(employees) {
   const select = document.getElementById("employee");
