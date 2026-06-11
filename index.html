@@ -80,8 +80,8 @@
     </button>
 
     <div class="text-center mt-3">
-      <a href="https://fitandservice.onrender.com/" target="_blank" class="btn btn-primary w-100">
-        Fit & Service
+      <a href="?page=admin" target="_blank" class="btn btn-primary w-100">
+        Admin Panel
       </a>
     </div>
 
@@ -94,30 +94,17 @@
 let allEmployees = [];
 
 window.onload = function () {
-  loadEmployeesFromAPI();
+  google.script.run
+    .withSuccessHandler(function(employees) {
+      allEmployees = employees || [];
+      renderEmployees(allEmployees);
+    })
+    .withFailureHandler(function(err) {
+      document.getElementById("msg").innerHTML =
+        "<span class='text-danger'>Ажилтан татах алдаа: " + err.message + "</span>";
+    })
+    .getEmployees();
 };
-
-async function loadEmployeesFromAPI() {
-  const msg = document.getElementById("msg");
-
-  try {
-    const url = window.location.origin + window.location.pathname + "?action=employees";
-    const res = await fetch(url);
-    const data = await res.json();
-
-    if (!data.success) {
-      msg.innerHTML = "<span class='text-danger'>Ажилтан татах алдаа</span>";
-      return;
-    }
-
-    allEmployees = data.employees || [];
-    renderEmployees(allEmployees);
-
-  } catch (err) {
-    console.log(err);
-    msg.innerHTML = "<span class='text-danger'>Ажилтан татах алдаа</span>";
-  }
-}
 
 function renderEmployees(employees) {
   const select = document.getElementById("employee");
@@ -167,7 +154,7 @@ function getSelectedDate() {
   return Number(parts[1]) + "/" + Number(parts[2]);
 }
 
-async function saveStatus() {
+function saveStatus() {
   const employee = document.getElementById("employee");
   const selected = employee.options[employee.selectedIndex];
   const date = getSelectedDate();
@@ -200,26 +187,22 @@ async function saveStatus() {
 
   msg.innerHTML = "Хадгалж байна...";
 
-  try {
-    const formData = new FormData();
-
-    formData.append("action", "save");
-    formData.append("code", code);
-    formData.append("date", date);
-    formData.append("actionStatus", actionStatus);
-
-    await fetch(window.location.origin + window.location.pathname, {
-      method: "POST",
-      mode: "no-cors",
-      body: formData
+  google.script.run
+    .withSuccessHandler(function(res) {
+      if (res && res.success) {
+        msg.innerHTML = "<span class='text-success'>" + res.message + "</span>";
+      } else {
+        msg.innerHTML = "<span class='text-danger'>" + (res.message || "Алдаа") + "</span>";
+      }
+    })
+    .withFailureHandler(function(err) {
+      msg.innerHTML = "<span class='text-danger'>Алдаа: " + err.message + "</span>";
+    })
+    .saveLunch({
+      code: code,
+      date: date,
+      actionStatus: actionStatus
     });
-
-    msg.innerHTML = "<span class='text-success'>Хадгаллаа</span>";
-
-  } catch (err) {
-    console.log(err);
-    msg.innerHTML = "<span class='text-danger'>Apps Script холболт алдаа</span>";
-  }
 }
 </script>
 
