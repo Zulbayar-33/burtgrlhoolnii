@@ -50,14 +50,14 @@
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbzfWYVnj-s4usdnqvixf-xFFi4wXw-5JsitE7rTNV3TVXXqcIQB-JTdYs1liKQKyraX9Q/exec";
 
-let allEmployees = [];
+window.onload = function () {
+  const s = document.createElement("script");
+  s.src = API_URL + "?action=employees&callback=loadEmployees";
+  document.body.appendChild(s);
+};
 
-window.onload = startApp;
-
-function startApp() {
-  const script = document.createElement("script");
-  script.src = API_URL + "?action=employees&callback=loadEmployees";
-  document.body.appendChild(script);
+function loadEmployees(data) {
+  alert("API OK: " + data.employees.length);
 }
 
 function loadEmployees(data) {
