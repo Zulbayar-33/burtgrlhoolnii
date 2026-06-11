@@ -52,6 +52,7 @@
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbzfWYVnj-s4usdnqvixf-xFFi4wXw-5JsitE7rTNV3TVXXqcIQB-JTdYs1liKQKyraX9Q/exec";
 alert("JS loaded");
+  alert(API_URL + "?action=employees&callback=loadEmployees");
 let allEmployees = [];
 
 window.onload = function () {
