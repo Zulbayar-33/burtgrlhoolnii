@@ -48,19 +48,29 @@
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzfWYVnj-s4usdnqvixf-xFFi4wXw-5JsitE7rTNV3TVXXqcIQB-JTdYs1liKQKyraX9Q/exec";
-
 window.onload = function () {
+  console.log("Starting API load...");
+
   const s = document.createElement("script");
+
+  s.onload = function() {
+    console.log("Script loaded");
+  };
+
+  s.onerror = function(e) {
+    console.error("Script failed", e);
+    document.getElementById("msg").innerHTML =
+      "<span class='text-danger'>API script load failed</span>";
+  };
+
   s.src = API_URL + "?action=employees&callback=loadEmployees";
+
   document.body.appendChild(s);
 };
 
 function loadEmployees(data) {
-  alert("API OK: " + data.employees.length);
-}
+  console.log("Callback fired", data);
 
-function loadEmployees(data) {
   if (!data.success) {
     document.getElementById("msg").innerHTML =
       "<span class='text-danger'>Ажилтан татах алдаа</span>";
@@ -73,68 +83,6 @@ function loadEmployees(data) {
   document.getElementById("msg").innerHTML =
     "<span class='text-success'>Ажилтан татагдлаа: " + allEmployees.length + "</span>";
 }
-
-function renderEmployees(employees) {
-  const select = document.getElementById("employee");
-  select.innerHTML = '<option value="">Ажилтан сонгоно уу</option>';
-
-  employees.forEach(function(emp) {
-    const option = document.createElement("option");
-    option.value = emp.code || "";
-    option.dataset.code = emp.code || "";
-    option.dataset.search = emp.search || "";
-    option.textContent = emp.display || "";
-    select.appendChild(option);
-  });
-}
-
-function filterEmployees() {
-  const keyword = document.getElementById("searchInput").value.toLowerCase().trim();
-
-  if (!keyword) {
-    renderEmployees(allEmployees);
-    document.getElementById("msg").innerHTML =
-      "<span class='text-info'>Бүх ажилтан: " + allEmployees.length + "</span>";
-    return;
-  }
-
-  const filtered = allEmployees.filter(emp => String(emp.search || "").includes(keyword));
-  renderEmployees(filtered);
-
-  document.getElementById("msg").innerHTML =
-    "<span class='text-info'>Олдсон: " + filtered.length + "</span>";
-
-  if (filtered.length === 1) {
-    document.getElementById("employee").selectedIndex = 1;
-  }
-}
-
-function getSelectedDate() {
-  const value = document.getElementById("datePicker").value;
-  if (!value) return "";
-  const parts = value.split("-");
-  return Number(parts[1]) + "/" + Number(parts[2]);
-}
-
-async function saveStatus() {
-  const employee = document.getElementById("employee");
-  const selected = employee.options[employee.selectedIndex];
-  const date = getSelectedDate();
-  const msg = document.getElementById("msg");
-  const saveBtn = document.getElementById("saveBtn");
-
-  const code = selected ? (selected.dataset.code || selected.value || "") : "";
-
-  if (!code) {
-    msg.innerHTML = "<span class='text-danger'>Ажилтан сонгоно уу</span>";
-    return;
-  }
-
-  if (!date) {
-    msg.innerHTML = "<span class='text-danger'>Огноо сонгоно уу</span>";
-    return;
-  }
-
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
