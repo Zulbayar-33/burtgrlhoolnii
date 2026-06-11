@@ -80,7 +80,7 @@
     </button>
 
     <div class="text-center mt-3">
-      <a href="?page=admin" target="_blank" class="btn btn-primary w-100">
+      <a href="admin.html" target="_blank" class="btn btn-primary w-100">
         Admin Panel
       </a>
     </div>
@@ -91,28 +91,36 @@
 </div>
 
 <script>
+const API_URL = "https://script.google.com/a/macros/akuma.mn/s/AKfycbzfWYVnj-s4usdnqvixf-xFFi4wXw-5JsitE7rTNV3TVXXqcIQB-JTdYs1liKQKyraX9Q/exec";
+
 let allEmployees = [];
 
-function startApp() {
-  google.script.run
-    .withSuccessHandler(function(employees) {
-      allEmployees = employees || [];
-      renderEmployees(allEmployees);
-
-      document.getElementById("msg").innerHTML =
-        "<span class='text-success'>Ажилтан татагдлаа: " + allEmployees.length + "</span>";
-    })
-    .withFailureHandler(function(err) {
-      document.getElementById("employee").innerHTML =
-        '<option value="">Ажилтан татах алдаа</option>';
-
-      document.getElementById("msg").innerHTML =
-        "<span class='text-danger'>Ажилтан татах алдаа: " + err.message + "</span>";
-    })
-    .getEmployees();
-}
-
 window.onload = startApp;
+
+async function startApp() {
+  try {
+    const res = await fetch(API_URL + "?action=employees");
+    const data = await res.json();
+
+    if (!data.success) {
+      throw new Error(data.message || "Ажилтан татах алдаа");
+    }
+
+    allEmployees = data.employees || [];
+    renderEmployees(allEmployees);
+
+    document.getElementById("msg").innerHTML =
+      "<span class='text-success'>Ажилтан татагдлаа: " + allEmployees.length + "</span>";
+
+  } catch (err) {
+    console.log(err);
+    document.getElementById("employee").innerHTML =
+      '<option value="">Ажилтан татах алдаа</option>';
+
+    document.getElementById("msg").innerHTML =
+      "<span class='text-danger'>Ажилтан татах алдаа: " + err.message + "</span>";
+  }
+}
 
 function renderEmployees(employees) {
   const select = document.getElementById("employee");
@@ -157,14 +165,13 @@ function filterEmployees() {
 
 function getSelectedDate() {
   const value = document.getElementById("datePicker").value;
-
   if (!value) return "";
 
   const parts = value.split("-");
   return Number(parts[1]) + "/" + Number(parts[2]);
 }
 
-function saveStatus() {
+async function saveStatus() {
   const employee = document.getElementById("employee");
   const selected = employee.options[employee.selectedIndex];
   const date = getSelectedDate();
@@ -199,26 +206,27 @@ function saveStatus() {
   saveBtn.disabled = true;
   msg.innerHTML = "Хадгалж байна...";
 
-  google.script.run
-    .withSuccessHandler(function(res) {
-      saveBtn.disabled = false;
+  try {
+    const formData = new FormData();
+    formData.append("action", "save");
+    formData.append("code", code);
+    formData.append("date", date);
+    formData.append("actionStatus", actionStatus);
 
-      if (res && res.success) {
-        msg.innerHTML = "<span class='text-success'>" + res.message + "</span>";
-      } else {
-        msg.innerHTML =
-          "<span class='text-danger'>" + ((res && res.message) ? res.message : "Алдаа") + "</span>";
-      }
-    })
-    .withFailureHandler(function(err) {
-      saveBtn.disabled = false;
-      msg.innerHTML = "<span class='text-danger'>Алдаа: " + err.message + "</span>";
-    })
-    .saveLunch({
-      code: code,
-      date: date,
-      actionStatus: actionStatus
+    await fetch(API_URL, {
+      method: "POST",
+      mode: "no-cors",
+      body: formData
     });
+
+    saveBtn.disabled = false;
+    msg.innerHTML = "<span class='text-success'>Хадгаллаа</span>";
+
+  } catch (err) {
+    console.log(err);
+    saveBtn.disabled = false;
+    msg.innerHTML = "<span class='text-danger'>Apps Script холболт алдаа</span>";
+  }
 }
 </script>
 
