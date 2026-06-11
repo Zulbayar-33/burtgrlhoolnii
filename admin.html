@@ -4,37 +4,22 @@
   <meta charset="UTF-8">
   <title>Admin Pending Approval</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
   <style>
-    .table-wrap {
-      overflow-x:auto;
-    }
-
+    .table-wrap { overflow-x:auto; }
     @media (max-width:700px) {
-      .btn-sm {
-        display:block;
-        width:100%;
-        margin-bottom:5px;
-      }
+      .btn-sm { display:block; width:100%; margin-bottom:5px; }
     }
   </style>
 </head>
 
 <body class="bg-light">
-
 <div class="container mt-4">
   <div class="card shadow p-4">
     <h3 class="mb-3">Pending хоолны бүртгэл</h3>
 
-    <button class="btn btn-primary mb-3" onclick="loadPending()">
-      Pending жагсаалт шинэчлэх
-    </button>
-
-    <a href="index.html" class="btn btn-secondary mb-3">
-      Form руу буцах
-    </a>
+    <button class="btn btn-primary mb-3" onclick="loadPending()">Pending жагсаалт шинэчлэх</button>
+    <a href="index.html" class="btn btn-secondary mb-3">Form руу буцах</a>
 
     <div id="list">Уншиж байна...</div>
   </div>
@@ -45,95 +30,78 @@ const API_URL = "https://script.google.com/a/macros/akuma.mn/s/AKfycbzfWYVnj-s4u
 
 window.onload = loadPending;
 
-async function loadPending() {
+function loadPending() {
+  const script = document.createElement("script");
+  script.src = API_URL + "?action=pending&callback=showPending";
+  document.body.appendChild(script);
+}
+
+function showPending(data) {
   const list = document.getElementById("list");
-  list.innerHTML = "Уншиж байна...";
 
-  try {
-    const res = await fetch(API_URL + "?action=pending");
-    const data = await res.json();
-
-    if (!data.success || !data.items || data.items.length === 0) {
-      list.innerHTML = "<div class='alert alert-info'>Pending бүртгэл байхгүй</div>";
-      return;
-    }
-
-    let html = `
-      <div class="table-wrap">
-      <table class="table table-bordered table-striped">
-        <thead>
-          <tr>
-            <th>№</th>
-            <th>Код</th>
-            <th>Овог</th>
-            <th>Нэр</th>
-            <th>Албан тушаал</th>
-            <th>Огноо</th>
-            <th>Үйлдэл</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-
-    data.items.forEach(function(item) {
-      html += `
-        <tr>
-          <td>${item.no || ""}</td>
-          <td>${item.code || ""}</td>
-          <td>${item.ovog || ""}</td>
-          <td>${item.ner || ""}</td>
-          <td>${item.job || ""}</td>
-          <td>${item.date || ""}</td>
-          <td>
-            <button class="btn btn-success btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'accept')">
-              Approve
-            </button>
-            <button class="btn btn-danger btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'reject')">
-              Reject
-            </button>
-            <button class="btn btn-secondary btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'remove')">
-              Remove
-            </button>
-          </td>
-        </tr>
-      `;
-    });
-
-    html += "</tbody></table></div>";
-    list.innerHTML = html;
-
-  } catch (err) {
-    console.log(err);
-    list.innerHTML =
-      "<div class='alert alert-danger'>Pending унших алдаа: " + err.message + "</div>";
+  if (!data.success || !data.items || data.items.length === 0) {
+    list.innerHTML = "<div class='alert alert-info'>Pending бүртгэл байхгүй</div>";
+    return;
   }
+
+  let html = `
+    <div class="table-wrap">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>Код</th>
+          <th>Овог</th>
+          <th>Нэр</th>
+          <th>Албан тушаал</th>
+          <th>Огноо</th>
+          <th>Үйлдэл</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  data.items.forEach(function(item) {
+    html += `
+      <tr>
+        <td>${item.no || ""}</td>
+        <td>${item.code || ""}</td>
+        <td>${item.ovog || ""}</td>
+        <td>${item.ner || ""}</td>
+        <td>${item.job || ""}</td>
+        <td>${item.date || ""}</td>
+        <td>
+          <button class="btn btn-success btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'accept')">Approve</button>
+          <button class="btn btn-danger btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'reject')">Reject</button>
+          <button class="btn btn-secondary btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'remove')">Remove</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  html += "</tbody></table></div>";
+  list.innerHTML = html;
 }
 
 async function adminAction(row, date, decision) {
   if (!confirm("Are you sure? " + decision)) return;
 
-  try {
-    const formData = new FormData();
-    formData.append("action", "admin");
-    formData.append("row", row);
-    formData.append("date", date);
-    formData.append("adminDecision", decision);
+  const formData = new FormData();
+  formData.append("action", "admin");
+  formData.append("row", row);
+  formData.append("date", date);
+  formData.append("adminDecision", decision);
 
-    await fetch(API_URL, {
-      method: "POST",
-      mode: "no-cors",
-      body: formData
-    });
+  await fetch(API_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: formData
+  });
 
-    alert("Saved");
-    loadPending();
-
-  } catch (err) {
-    console.log(err);
-    alert("Алдаа: " + err.message);
-  }
+  alert("Saved");
+  document.getElementById("list").innerHTML = "Уншиж байна...";
+  loadPending();
 }
 </script>
-
 </body>
 </html>
