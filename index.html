@@ -40,8 +40,14 @@
         padding:18px;
       }
 
-      .btn {
+      .input-group {
+        display:block;
+      }
+
+      .input-group input,
+      .input-group button {
         width:100%;
+        border-radius:8px !important;
         margin-top:8px;
       }
     }
@@ -74,7 +80,7 @@
     </button>
 
     <div class="text-center mt-3">
-      <a href="https://fitandservice.onrender.com/" target="_blank" class="btn btn-primary">
+      <a href="https://fitandservice.onrender.com/" target="_blank" class="btn btn-primary w-100">
         Fit & Service
       </a>
     </div>
@@ -88,18 +94,29 @@
 let allEmployees = [];
 
 window.onload = function () {
-  google.script.run
-    .withSuccessHandler(loadEmployees)
-    .withFailureHandler(function(err) {
-      document.getElementById("msg").innerHTML =
-        "<span class='text-danger'>Ажилтан татах алдаа: " + err.message + "</span>";
-    })
-    .getEmployees();
+  loadEmployeesFromAPI();
 };
 
-function loadEmployees(employees) {
-  allEmployees = employees;
-  renderEmployees(employees);
+async function loadEmployeesFromAPI() {
+  const msg = document.getElementById("msg");
+
+  try {
+    const url = window.location.origin + window.location.pathname + "?action=employees";
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (!data.success) {
+      msg.innerHTML = "<span class='text-danger'>Ажилтан татах алдаа</span>";
+      return;
+    }
+
+    allEmployees = data.employees || [];
+    renderEmployees(allEmployees);
+
+  } catch (err) {
+    console.log(err);
+    msg.innerHTML = "<span class='text-danger'>Ажилтан татах алдаа</span>";
+  }
 }
 
 function renderEmployees(employees) {
@@ -116,12 +133,7 @@ function renderEmployees(employees) {
     option.dataset.ner = emp.ner;
     option.dataset.job = emp.job;
 
-    option.textContent =
-      emp.no + ". " +
-      emp.code + " - " +
-      emp.ovog + " " +
-      emp.ner + " - " +
-      emp.job;
+    option.textContent = emp.display;
 
     select.appendChild(option);
   });
@@ -136,15 +148,7 @@ function filterEmployees() {
   }
 
   const filtered = allEmployees.filter(emp => {
-    const text = (
-      emp.no + " " +
-      emp.code + " " +
-      emp.ovog + " " +
-      emp.ner + " " +
-      emp.job
-    ).toLowerCase();
-
-    return text.includes(keyword);
+    return emp.search.includes(keyword);
   });
 
   renderEmployees(filtered);
@@ -160,13 +164,10 @@ function getSelectedDate() {
   if (!value) return "";
 
   const parts = value.split("-");
-  const month = Number(parts[1]);
-  const day = Number(parts[2]);
-
-  return month + "/" + day;
+  return Number(parts[1]) + "/" + Number(parts[2]);
 }
 
-function saveStatus() {
+async function saveStatus() {
   const employee = document.getElementById("employee");
   const selected = employee.options[employee.selectedIndex];
   const date = getSelectedDate();
@@ -199,22 +200,26 @@ function saveStatus() {
 
   msg.innerHTML = "Хадгалж байна...";
 
-  google.script.run
-    .withSuccessHandler(function(res) {
-      if (res.success) {
-        msg.innerHTML = "<span class='text-success'>" + res.message + "</span>";
-      } else {
-        msg.innerHTML = "<span class='text-danger'>" + res.message + "</span>";
-      }
-    })
-    .withFailureHandler(function(err) {
-      msg.innerHTML = "<span class='text-danger'>Алдаа: " + err.message + "</span>";
-    })
-    .saveLunch({
-      code: code,
-      date: date,
-      actionStatus: actionStatus
+  try {
+    const formData = new FormData();
+
+    formData.append("action", "save");
+    formData.append("code", code);
+    formData.append("date", date);
+    formData.append("actionStatus", actionStatus);
+
+    await fetch(window.location.origin + window.location.pathname, {
+      method: "POST",
+      mode: "no-cors",
+      body: formData
     });
+
+    msg.innerHTML = "<span class='text-success'>Хадгаллаа</span>";
+
+  } catch (err) {
+    console.log(err);
+    msg.innerHTML = "<span class='text-danger'>Apps Script холболт алдаа</span>";
+  }
 }
 </script>
 
