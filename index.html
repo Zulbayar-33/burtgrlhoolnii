@@ -79,6 +79,12 @@
       🍱 Хоол идсэн
     </button>
 
+    <div class="text-center mt-3">
+      <a href="?page=admin" target="_blank" class="btn btn-primary w-100">
+        Admin Panel
+      </a>
+    </div>
+
     <div id="msg">Ажилтан татаж байна...</div>
 
   </div>
@@ -87,7 +93,7 @@
 <script>
 let allEmployees = [];
 
-window.addEventListener("load", function () {
+function startApp() {
   google.script.run
     .withSuccessHandler(function(employees) {
       allEmployees = employees || [];
@@ -104,27 +110,22 @@ window.addEventListener("load", function () {
         "<span class='text-danger'>Ажилтан татах алдаа: " + err.message + "</span>";
     })
     .getEmployees();
+}
 
-  document.getElementById("searchInput").addEventListener("keyup", function(e) {
-    if (e.key === "Enter") {
-      filterEmployees();
-    }
-  });
-});
+window.onload = startApp;
 
 function renderEmployees(employees) {
   const select = document.getElementById("employee");
   select.innerHTML = '<option value="">Ажилтан сонгоно уу</option>';
 
-  employees.forEach(emp => {
+  employees.forEach(function(emp) {
     const option = document.createElement("option");
 
     option.value = emp.code || "";
     option.dataset.code = emp.code || "";
+    option.dataset.search = emp.search || "";
 
-    option.textContent = emp.display || (
-      emp.no + ". " + emp.code + " - " + emp.ovog + " " + emp.ner + " - " + emp.job
-    );
+    option.textContent = emp.display || "";
 
     select.appendChild(option);
   });
@@ -135,12 +136,13 @@ function filterEmployees() {
 
   if (!keyword) {
     renderEmployees(allEmployees);
+    document.getElementById("msg").innerHTML =
+      "<span class='text-info'>Бүх ажилтан: " + allEmployees.length + "</span>";
     return;
   }
 
-  const filtered = allEmployees.filter(emp => {
-    const text = emp.search || "";
-    return text.includes(keyword);
+  const filtered = allEmployees.filter(function(emp) {
+    return String(emp.search || "").includes(keyword);
   });
 
   renderEmployees(filtered);
