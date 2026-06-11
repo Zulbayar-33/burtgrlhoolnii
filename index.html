@@ -70,13 +70,6 @@ function loadEmployeesJsonp() {
   const s = document.createElement("script");
   s.src = url;
   document.body.appendChild(s);
-
-  setTimeout(function () {
-    if (allEmployees.length === 0) {
-      document.getElementById("msg").innerHTML =
-        "<span class='text-danger'>API connected but callback not received</span>";
-    }
-  }, 5000);
 }
 
 window.loadEmployees = function(data) {
