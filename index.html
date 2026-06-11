@@ -5,6 +5,7 @@
   <title>Хоол идсэн бүртгэл</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <style>
     body { background:#f4f6f9; font-family:Arial,sans-serif; }
     .box { max-width:700px; margin:25px auto; background:white; padding:25px; border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,.08); }
@@ -19,6 +20,7 @@
 </head>
 
 <body>
+
 <div class="container">
   <div class="box">
     <h3 class="title">Хоол идсэн бүртгэл</h3>
@@ -48,30 +50,32 @@
 </div>
 
 <script>
+const API_URL = "https://script.google.com/macros/s/AKfycbzfWYVnj-s4usdnqvixf-xFFi4wXw-5JsitE7rTNV3TVXXqcIQB-JTdYs1liKQKyraX9Q/exec";
+
+let allEmployees = [];
+
 window.onload = function () {
-  console.log("Starting API load...");
+  loadEmployeesJsonp();
 
+  document.getElementById("searchInput").addEventListener("keyup", function(e) {
+    if (e.key === "Enter") {
+      filterEmployees();
+    }
+  });
+};
+
+function loadEmployeesJsonp() {
   const s = document.createElement("script");
-
-  s.onload = function() {
-    console.log("Script loaded");
-  };
-
-  s.onerror = function(e) {
-    console.error("Script failed", e);
+  s.src = API_URL + "?action=employees&callback=loadEmployees";
+  s.onerror = function() {
     document.getElementById("msg").innerHTML =
       "<span class='text-danger'>API script load failed</span>";
   };
-
-  s.src = API_URL + "?action=employees&callback=loadEmployees";
-
   document.body.appendChild(s);
-};
+}
 
 function loadEmployees(data) {
-  console.log("Callback fired", data);
-
-  if (!data.success) {
+  if (!data || !data.success) {
     document.getElementById("msg").innerHTML =
       "<span class='text-danger'>Ажилтан татах алдаа</span>";
     return;
@@ -83,10 +87,77 @@ function loadEmployees(data) {
   document.getElementById("msg").innerHTML =
     "<span class='text-success'>Ажилтан татагдлаа: " + allEmployees.length + "</span>";
 }
+
+function renderEmployees(employees) {
+  const select = document.getElementById("employee");
+  select.innerHTML = '<option value="">Ажилтан сонгоно уу</option>';
+
+  employees.forEach(function(emp) {
+    const option = document.createElement("option");
+    option.value = emp.code || "";
+    option.dataset.code = emp.code || "";
+    option.dataset.search = emp.search || "";
+    option.textContent = emp.display || "";
+    select.appendChild(option);
+  });
+}
+
+function filterEmployees() {
+  const keyword = document.getElementById("searchInput").value.toLowerCase().trim();
+
+  if (!keyword) {
+    renderEmployees(allEmployees);
+    document.getElementById("msg").innerHTML =
+      "<span class='text-info'>Бүх ажилтан: " + allEmployees.length + "</span>";
+    return;
+  }
+
+  const filtered = allEmployees.filter(function(emp) {
+    return String(emp.search || "").includes(keyword);
+  });
+
+  renderEmployees(filtered);
+
+  document.getElementById("msg").innerHTML =
+    "<span class='text-info'>Олдсон: " + filtered.length + "</span>";
+
+  if (filtered.length === 1) {
+    document.getElementById("employee").selectedIndex = 1;
+  }
+}
+
+function getSelectedDate() {
+  const value = document.getElementById("datePicker").value;
+  if (!value) return "";
+
+  const parts = value.split("-");
+  return Number(parts[1]) + "/" + Number(parts[2]);
+}
+
+async function saveStatus() {
+  const employee = document.getElementById("employee");
+  const selected = employee.options[employee.selectedIndex];
+  const date = getSelectedDate();
+  const msg = document.getElementById("msg");
+  const saveBtn = document.getElementById("saveBtn");
+
+  const code = selected ? (selected.dataset.code || selected.value || "") : "";
+
+  if (!code) {
+    msg.innerHTML = "<span class='text-danger'>Ажилтан сонгоно уу</span>";
+    return;
+  }
+
+  if (!date) {
+    msg.innerHTML = "<span class='text-danger'>Огноо сонгоно уу</span>";
+    return;
+  }
+
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
   let actionStatus = "approved";
+
   if (currentMinutes < 9 * 60 || currentMinutes > 11 * 60 + 30) {
     alert("Sorry, you are late for lunch. Admin approval pending.");
     actionStatus = "pending";
@@ -95,21 +166,28 @@ function loadEmployees(data) {
   saveBtn.disabled = true;
   msg.innerHTML = "Хадгалж байна...";
 
-  const formData = new FormData();
-  formData.append("action", "save");
-  formData.append("code", code);
-  formData.append("date", date);
-  formData.append("actionStatus", actionStatus);
+  try {
+    const formData = new FormData();
+    formData.append("action", "save");
+    formData.append("code", code);
+    formData.append("date", date);
+    formData.append("actionStatus", actionStatus);
 
-  await fetch(API_URL, {
-    method: "POST",
-    mode: "no-cors",
-    body: formData
-  });
+    await fetch(API_URL, {
+      method: "POST",
+      mode: "no-cors",
+      body: formData
+    });
 
-  saveBtn.disabled = false;
-  msg.innerHTML = "<span class='text-success'>Хадгаллаа</span>";
+    saveBtn.disabled = false;
+    msg.innerHTML = "<span class='text-success'>Хадгаллаа</span>";
+
+  } catch (err) {
+    saveBtn.disabled = false;
+    msg.innerHTML = "<span class='text-danger'>Apps Script холболт алдаа</span>";
+  }
 }
 </script>
+
 </body>
 </html>
