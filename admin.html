@@ -32,7 +32,7 @@
       Pending жагсаалт шинэчлэх
     </button>
 
-    <a href="?" class="btn btn-secondary mb-3">
+    <a href="index.html" class="btn btn-secondary mb-3">
       Form руу буцах
     </a>
 
@@ -41,92 +41,97 @@
 </div>
 
 <script>
+const API_URL = "https://script.google.com/a/macros/akuma.mn/s/AKfycbzfWYVnj-s4usdnqvixf-xFFi4wXw-5JsitE7rTNV3TVXXqcIQB-JTdYs1liKQKyraX9Q/exec";
+
 window.onload = loadPending;
 
-function loadPending() {
+async function loadPending() {
   const list = document.getElementById("list");
   list.innerHTML = "Уншиж байна...";
 
-  google.script.run
-    .withSuccessHandler(function(items) {
-      items = items || [];
+  try {
+    const res = await fetch(API_URL + "?action=pending");
+    const data = await res.json();
 
-      if (items.length === 0) {
-        list.innerHTML = "<div class='alert alert-info'>Pending бүртгэл байхгүй</div>";
-        return;
-      }
+    if (!data.success || !data.items || data.items.length === 0) {
+      list.innerHTML = "<div class='alert alert-info'>Pending бүртгэл байхгүй</div>";
+      return;
+    }
 
-      let html = `
-        <div class="table-wrap">
-        <table class="table table-bordered table-striped">
-          <thead>
-            <tr>
-              <th>№</th>
-              <th>Код</th>
-              <th>Овог</th>
-              <th>Нэр</th>
-              <th>Албан тушаал</th>
-              <th>Огноо</th>
-              <th>Үйлдэл</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
-
-      items.forEach(function(item) {
-        html += `
+    let html = `
+      <div class="table-wrap">
+      <table class="table table-bordered table-striped">
+        <thead>
           <tr>
-            <td>${item.no || ""}</td>
-            <td>${item.code || ""}</td>
-            <td>${item.ovog || ""}</td>
-            <td>${item.ner || ""}</td>
-            <td>${item.job || ""}</td>
-            <td>${item.date || ""}</td>
-            <td>
-              <button class="btn btn-success btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'accept')">
-                Approve
-              </button>
-              <button class="btn btn-danger btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'reject')">
-                Reject
-              </button>
-              <button class="btn btn-secondary btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'remove')">
-                Remove
-              </button>
-            </td>
+            <th>№</th>
+            <th>Код</th>
+            <th>Овог</th>
+            <th>Нэр</th>
+            <th>Албан тушаал</th>
+            <th>Огноо</th>
+            <th>Үйлдэл</th>
           </tr>
-        `;
-      });
+        </thead>
+        <tbody>
+    `;
 
-      html += "</tbody></table></div>";
-      list.innerHTML = html;
-    })
-    .withFailureHandler(function(err) {
-      list.innerHTML =
-        "<div class='alert alert-danger'>Pending унших алдаа: " + err.message + "</div>";
-    })
-    .getPendingList();
+    data.items.forEach(function(item) {
+      html += `
+        <tr>
+          <td>${item.no || ""}</td>
+          <td>${item.code || ""}</td>
+          <td>${item.ovog || ""}</td>
+          <td>${item.ner || ""}</td>
+          <td>${item.job || ""}</td>
+          <td>${item.date || ""}</td>
+          <td>
+            <button class="btn btn-success btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'accept')">
+              Approve
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'reject')">
+              Reject
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="adminAction(${item.row}, '${item.date}', 'remove')">
+              Remove
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += "</tbody></table></div>";
+    list.innerHTML = html;
+
+  } catch (err) {
+    console.log(err);
+    list.innerHTML =
+      "<div class='alert alert-danger'>Pending унших алдаа: " + err.message + "</div>";
+  }
 }
 
-function adminAction(row, date, decision) {
+async function adminAction(row, date, decision) {
   if (!confirm("Are you sure? " + decision)) return;
 
-  google.script.run
-    .withSuccessHandler(function(res) {
-      if (res && res.success) {
-        alert(res.message);
-        loadPending();
-      } else {
-        alert((res && res.message) ? res.message : "Алдаа");
-      }
-    })
-    .withFailureHandler(function(err) {
-      alert("Алдаа: " + err.message);
-    })
-    .adminAction({
-      row: row,
-      date: date,
-      adminDecision: decision
+  try {
+    const formData = new FormData();
+    formData.append("action", "admin");
+    formData.append("row", row);
+    formData.append("date", date);
+    formData.append("adminDecision", decision);
+
+    await fetch(API_URL, {
+      method: "POST",
+      mode: "no-cors",
+      body: formData
     });
+
+    alert("Saved");
+    loadPending();
+
+  } catch (err) {
+    console.log(err);
+    alert("Алдаа: " + err.message);
+  }
 }
 </script>
 
