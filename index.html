@@ -55,31 +55,6 @@
 </head>
 
 <body>
-  window.addEventListener("load", function () {
-  google.script.run
-    .withSuccessHandler(function(employees) {
-      allEmployees = employees || [];
-      renderEmployees(allEmployees);
-
-      document.getElementById("msg").innerHTML =
-        "<span class='text-success'>Ажилтан татагдлаа: " + allEmployees.length + "</span>";
-    })
-    .withFailureHandler(function(err) {
-
-      console.log(err);
-
-      alert(
-        "ERROR:\n" +
-        JSON.stringify(err, null, 2)
-      );
-
-      document.getElementById("msg").innerHTML =
-        "<span class='text-danger'>ERROR: " +
-        (err.message || JSON.stringify(err)) +
-        "</span>";
-    })
-    .getEmployees();
-});
 
 <div class="container">
   <div class="box">
