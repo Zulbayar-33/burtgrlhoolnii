@@ -79,13 +79,7 @@
       🍱 Хоол идсэн
     </button>
 
-    <div class="text-center mt-3">
-      <a href="?page=admin" target="_blank" class="btn btn-primary w-100">
-        Admin Panel
-      </a>
-    </div>
-
-    <div id="msg"></div>
+    <div id="msg">Ажилтан татаж байна...</div>
 
   </div>
 </div>
@@ -93,9 +87,7 @@
 <script>
 let allEmployees = [];
 
-window.onload = function () {
-  document.getElementById("msg").innerHTML = "Ажилтан татаж байна...";
-
+window.addEventListener("load", function () {
   google.script.run
     .withSuccessHandler(function(employees) {
       allEmployees = employees || [];
@@ -118,7 +110,7 @@ window.onload = function () {
       filterEmployees();
     }
   });
-};
+});
 
 function renderEmployees(employees) {
   const select = document.getElementById("employee");
@@ -129,15 +121,10 @@ function renderEmployees(employees) {
 
     option.value = emp.code || "";
     option.dataset.code = emp.code || "";
-    option.dataset.no = emp.no || "";
-    option.dataset.ovog = emp.ovog || "";
-    option.dataset.ner = emp.ner || "";
-    option.dataset.job = emp.job || "";
 
-    option.textContent =
-      (emp.display && emp.display.trim() !== "")
-        ? emp.display
-        : ((emp.no || "") + ". " + (emp.code || "") + " - " + (emp.ovog || "") + " " + (emp.ner || "") + " - " + (emp.job || ""));
+    option.textContent = emp.display || (
+      emp.no + ". " + emp.code + " - " + emp.ovog + " " + emp.ner + " - " + emp.job
+    );
 
     select.appendChild(option);
   });
@@ -148,20 +135,11 @@ function filterEmployees() {
 
   if (!keyword) {
     renderEmployees(allEmployees);
-    document.getElementById("msg").innerHTML =
-      "<span class='text-info'>Бүх ажилтан: " + allEmployees.length + "</span>";
     return;
   }
 
   const filtered = allEmployees.filter(emp => {
-    const text =
-      (emp.search ||
-      ((emp.no || "") + " " +
-       (emp.code || "") + " " +
-       (emp.ovog || "") + " " +
-       (emp.ner || "") + " " +
-       (emp.job || ""))).toLowerCase();
-
+    const text = emp.search || "";
     return text.includes(keyword);
   });
 
@@ -226,7 +204,8 @@ function saveStatus() {
       if (res && res.success) {
         msg.innerHTML = "<span class='text-success'>" + res.message + "</span>";
       } else {
-        msg.innerHTML = "<span class='text-danger'>" + ((res && res.message) ? res.message : "Алдаа") + "</span>";
+        msg.innerHTML =
+          "<span class='text-danger'>" + ((res && res.message) ? res.message : "Алдаа") + "</span>";
       }
     })
     .withFailureHandler(function(err) {
