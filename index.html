@@ -69,13 +69,13 @@
 
     <label class="form-label">Ажилтан сонгох</label>
     <select id="employee" class="form-select mb-3">
-      <option value="">Ажилтан сонгоно уу</option>
+      <option value="">Ажилтан татаж байна...</option>
     </select>
 
     <label class="form-label">Огноо сонгох</label>
     <input type="date" id="datePicker" class="form-control mb-3">
 
-    <button class="btn btn-success w-100" onclick="saveStatus()">
+    <button id="saveBtn" class="btn btn-success w-100" onclick="saveStatus()">
       🍱 Хоол идсэн
     </button>
 
@@ -94,16 +94,30 @@
 let allEmployees = [];
 
 window.onload = function () {
+  document.getElementById("msg").innerHTML = "Ажилтан татаж байна...";
+
   google.script.run
     .withSuccessHandler(function(employees) {
       allEmployees = employees || [];
       renderEmployees(allEmployees);
+
+      document.getElementById("msg").innerHTML =
+        "<span class='text-success'>Ажилтан татагдлаа: " + allEmployees.length + "</span>";
     })
     .withFailureHandler(function(err) {
+      document.getElementById("employee").innerHTML =
+        '<option value="">Ажилтан татах алдаа</option>';
+
       document.getElementById("msg").innerHTML =
         "<span class='text-danger'>Ажилтан татах алдаа: " + err.message + "</span>";
     })
     .getEmployees();
+
+  document.getElementById("searchInput").addEventListener("keyup", function(e) {
+    if (e.key === "Enter") {
+      filterEmployees();
+    }
+  });
 };
 
 function renderEmployees(employees) {
@@ -113,14 +127,17 @@ function renderEmployees(employees) {
   employees.forEach(emp => {
     const option = document.createElement("option");
 
-    option.value = emp.code;
-    option.dataset.code = emp.code;
-    option.dataset.no = emp.no;
-    option.dataset.ovog = emp.ovog;
-    option.dataset.ner = emp.ner;
-    option.dataset.job = emp.job;
+    option.value = emp.code || "";
+    option.dataset.code = emp.code || "";
+    option.dataset.no = emp.no || "";
+    option.dataset.ovog = emp.ovog || "";
+    option.dataset.ner = emp.ner || "";
+    option.dataset.job = emp.job || "";
 
-    option.textContent = emp.display;
+    option.textContent =
+      (emp.display && emp.display.trim() !== "")
+        ? emp.display
+        : ((emp.no || "") + ". " + (emp.code || "") + " - " + (emp.ovog || "") + " " + (emp.ner || "") + " - " + (emp.job || ""));
 
     select.appendChild(option);
   });
@@ -131,14 +148,27 @@ function filterEmployees() {
 
   if (!keyword) {
     renderEmployees(allEmployees);
+    document.getElementById("msg").innerHTML =
+      "<span class='text-info'>Бүх ажилтан: " + allEmployees.length + "</span>";
     return;
   }
 
   const filtered = allEmployees.filter(emp => {
-    return emp.search.includes(keyword);
+    const text =
+      (emp.search ||
+      ((emp.no || "") + " " +
+       (emp.code || "") + " " +
+       (emp.ovog || "") + " " +
+       (emp.ner || "") + " " +
+       (emp.job || ""))).toLowerCase();
+
+    return text.includes(keyword);
   });
 
   renderEmployees(filtered);
+
+  document.getElementById("msg").innerHTML =
+    "<span class='text-info'>Олдсон: " + filtered.length + "</span>";
 
   if (filtered.length === 1) {
     document.getElementById("employee").selectedIndex = 1;
@@ -159,8 +189,9 @@ function saveStatus() {
   const selected = employee.options[employee.selectedIndex];
   const date = getSelectedDate();
   const msg = document.getElementById("msg");
+  const saveBtn = document.getElementById("saveBtn");
 
-  const code = selected.dataset.code || "";
+  const code = selected ? (selected.dataset.code || selected.value || "") : "";
 
   if (!code) {
     msg.innerHTML = "<span class='text-danger'>Ажилтан сонгоно уу</span>";
@@ -185,17 +216,21 @@ function saveStatus() {
     actionStatus = "pending";
   }
 
+  saveBtn.disabled = true;
   msg.innerHTML = "Хадгалж байна...";
 
   google.script.run
     .withSuccessHandler(function(res) {
+      saveBtn.disabled = false;
+
       if (res && res.success) {
         msg.innerHTML = "<span class='text-success'>" + res.message + "</span>";
       } else {
-        msg.innerHTML = "<span class='text-danger'>" + (res.message || "Алдаа") + "</span>";
+        msg.innerHTML = "<span class='text-danger'>" + ((res && res.message) ? res.message : "Алдаа") + "</span>";
       }
     })
     .withFailureHandler(function(err) {
+      saveBtn.disabled = false;
       msg.innerHTML = "<span class='text-danger'>Алдаа: " + err.message + "</span>";
     })
     .saveLunch({
